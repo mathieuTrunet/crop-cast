@@ -1,9 +1,11 @@
 import { HttpService } from '@nestjs/axios'
-import { Inject, Injectable } from '@nestjs/common'
+import { HttpException, Inject, Injectable } from '@nestjs/common'
 import { firstValueFrom } from 'rxjs'
 import { Weather } from './entities/weather.entity'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Cache } from 'cache-manager'
+
+const REQUEST_TIMEOUT_IN_MILLISECONDS = 5000 // 5 seconds
 
 const API_ENDPOINT_URL = 'https://api.open-meteo.com/v1/forecast'
 
@@ -24,10 +26,14 @@ export class WeatherService {
     if (weather) return weather
 
     const response = await firstValueFrom(
-      this.httpService.get<Weather>(API_ENDPOINT_URL, { params: { ...API_QUERY_PARAMS, latitude, longitude } })
+      this.httpService.get<Weather>(API_ENDPOINT_URL, {
+        params: { ...API_QUERY_PARAMS, latitude, longitude },
+        timeout: REQUEST_TIMEOUT_IN_MILLISECONDS,
+      })
     )
 
-    if (response.status !== 200) throw new Error(`Weather API error: ${response.statusText || 'Unknown error'}`)
+    if (response.status !== 200)
+      throw new HttpException(`Weather API error: ${response.statusText || 'Unknown error'}`, response.status)
 
     await this.cacheManager.set(`weather_${latitude}_${longitude}`, response.data)
 
