@@ -20,11 +20,13 @@
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.0",
+    "@nestjs/cache-manager": "^3.0.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^11.0.1",
     "axios": "^1.8.2",
+    "cache-manager": "^6.4.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
