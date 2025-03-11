@@ -11,4 +11,16 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    outDir: 'dist/frontend',
+    emptyOutDir: true,
+  },
+  server: {
+    proxy: {
+      '/weather': {
+        target: 'http://backend:3000',
+        changeOrigin: true,
+      },
+    },
+  },
 })
