@@ -1,0 +1,55 @@
+FROM node:20-alpine AS backend-builder
+
+ARG BACKEND_PORT
+RUN [ -n "$BACKEND_PORT" ] || (echo "ERROR: BACKEND_PORT argument is required for the build" && false)
+
+WORKDIR /app
+
+RUN npm install -g pnpm
+
+COPY /backend/package*.json /backend/pnpm-lock.yaml* ./
+
+RUN pnpm install
+
+COPY /backend/ .
+
+RUN pnpm run build
+
+FROM node:20-alpine AS frontend-builder
+
+WORKDIR /app
+
+RUN npm install -g pnpm
+
+COPY /frontend/package*.json /frontend/pnpm-lock.yaml* ./
+
+RUN pnpm install
+
+COPY /frontend/ .
+
+RUN pnpm run build
+
+FROM node:20-alpine as backend
+
+WORKDIR /app
+
+RUN npm install -g pnpm
+
+COPY --from=backend-builder /app/package*.json /app/pnpm-lock.yaml* ./
+
+RUN pnpm install --prod
+
+COPY --from=backend-builder /app/dist ./dist
+
+COPY --from=backend-builder /app/node_modules/.bin/ /app/node_modules/.bin/
+
+COPY --from=frontend-builder /app/dist ./frontend
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+ARG BACKEND_PORT
+ENV BACKEND_PORT=$BACKEND_PORT
+
+EXPOSE ${BACKEND_PORT}
+
+CMD ["node", "dist/main"]
