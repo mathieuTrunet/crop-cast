@@ -1,6 +1,6 @@
 import { WeatherGeneral, Temperature, Humidity, LightExposure } from '../types'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'
 const API_URL_ENDPOINT = `${API_BASE_URL}/weather`
 
 export interface WeatherParams {
