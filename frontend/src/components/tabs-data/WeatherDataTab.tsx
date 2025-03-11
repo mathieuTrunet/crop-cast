@@ -1,6 +1,8 @@
 import { useLocation } from '../../lib/context/LocationContext'
+import { useTime } from '../../lib/context/TimeContext'
 import { useWeatherGeneral, weatherCodeMap } from '../../lib/hooks/useWeatherData'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
+import { TimeSelector } from '../TimeSelector'
 import {
   SunIcon,
   CloudIcon,
@@ -14,10 +16,8 @@ import {
 
 function WeatherDataTab() {
   const { selectedLocation } = useLocation()
+  const { selectedTimeIndex } = useTime()
   const { data: weatherGeneral, isLoading, error } = useWeatherGeneral(selectedLocation)
-
-  const currentWeatherCode = weatherGeneral ? weatherGeneral.weather_code[0] : null
-  const currentWindSpeed = weatherGeneral ? weatherGeneral.wind_speed[0] : null
 
   const getWeatherIcon = (code: number | null) => {
     if (code === null) return <CloudIcon className='h-10 w-10' />
@@ -63,8 +63,17 @@ function WeatherDataTab() {
     )
   }
 
+  const currentWeatherCode = weatherGeneral.weather_code[selectedTimeIndex]
+  const currentWindSpeed = weatherGeneral.wind_speed[selectedTimeIndex]
+
   return (
     <div className='h-full w-full space-y-4 p-2'>
+      <Card className='mb-4'>
+        <CardContent className='pt-4'>
+          <TimeSelector times={weatherGeneral.time} />
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader className='pb-2'>
           <CardTitle>Météo générale</CardTitle>
@@ -97,23 +106,29 @@ function WeatherDataTab() {
         </CardHeader>
         <CardContent>
           <div className='grid grid-cols-3 gap-2'>
-            {weatherGeneral.weather_code.slice(0, 6).map((code, index) => (
-              <div
-                key={index}
-                className='flex flex-col items-center p-2 border rounded-md'>
-                <p className='text-xs text-gray-500'>
-                  {new Date(weatherGeneral.time[index]).toLocaleDateString('fr-FR', {
-                    weekday: 'short',
-                    hour: '2-digit',
-                  })}
-                </p>
-                {getWeatherIcon(code)}
-                <p className='text-xs mt-1'>{weatherCodeMap[code]}</p>
-                <p className='text-xs'>
-                  {weatherGeneral.wind_speed[index].toFixed(1)} {weatherGeneral.hourly_units.wind_speed_10m}
-                </p>
-              </div>
-            ))}
+            {weatherGeneral.weather_code.slice(selectedTimeIndex, selectedTimeIndex + 6).map((code, index) => {
+              const actualIndex = selectedTimeIndex + index
+              if (actualIndex >= weatherGeneral.weather_code.length) return null
+
+              return (
+                <div
+                  key={actualIndex}
+                  className='flex flex-col items-center p-2 border rounded-md'>
+                  <p className='text-xs text-gray-500'>
+                    {new Date(weatherGeneral.time[actualIndex]).toLocaleDateString('fr-FR', {
+                      weekday: 'short',
+                      hour: '2-digit',
+                    })}
+                  </p>
+                  {getWeatherIcon(code)}
+                  <p className='text-xs mt-1'>{weatherCodeMap[code]}</p>
+                  <p className='text-xs'>
+                    {weatherGeneral.wind_speed[actualIndex].toFixed(1)}{' '}
+                    {weatherGeneral.hourly_units.wind_speed_10m}
+                  </p>
+                </div>
+              )
+            })}
           </div>
         </CardContent>
       </Card>
