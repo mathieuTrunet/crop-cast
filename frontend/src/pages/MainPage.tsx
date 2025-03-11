@@ -13,9 +13,19 @@ function MainPage() {
 
   return (
     <div className='h-screen w-screen space-y-4'>
-      <nav className='border-b border-gray-200 border-shadow-sm'>
-        <div className='p-4 bg-teal-500 w-64 items-center justify-center border-gray-200 border-shadow-sm'>
-          <h1 className='text-2xl font-bold text-white'>Crop Cast</h1>
+      <nav className='border-b border-border shadow-sm bg-card'>
+        <div className='max-w-screen-xl mx-auto px-4 py-3 flex items-center justify-between'>
+          <div className='flex items-center space-x-3'>
+            <img
+              src='/icon.svg'
+              alt='Crop Cast Logo'
+              className='h-8 w-8'
+            />
+            <h1 className='text-2xl font-bold text-primary'>Crop Cast</h1>
+          </div>
+          <div className='flex items-center space-x-4'>
+            <span className='text-sm text-muted-foreground'>Prévisions météorologiques pour l'agriculture</span>
+          </div>
         </div>
       </nav>
       <div className='flex justify-center items-center mx-70'>
