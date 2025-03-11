@@ -4,8 +4,13 @@ import WeatherDataTab from '../components/tabs-data/WeatherDataTab'
 import TemperatureTab from '../components/tabs-data/TemperatureTab'
 import HumidityTab from '../components/tabs-data/HumidityTab'
 import LightExposureTab from '../components/tabs-data/LightExposureTab'
+import { useLocation, DataTab } from '../lib/context/LocationContext'
 
 function MainPage() {
+  const { setSelectedTab } = useLocation()
+
+  const handleTabChange = (value: string) => setSelectedTab(value.toLowerCase() as DataTab)
+
   return (
     <div className='h-screen w-screen space-y-4'>
       <nav className='border-b border-gray-200 border-shadow-sm'>
@@ -18,7 +23,8 @@ function MainPage() {
           <div className='w-1/3'>
             <Tabs
               defaultValue='Weather'
-              className='h-full'>
+              className='h-full'
+              onValueChange={handleTabChange}>
               <TabsList className='grid grid-cols-4 w-full'>
                 <TabsTrigger value='Weather'>Météo</TabsTrigger>
                 <TabsTrigger value='Temperature'>Température</TabsTrigger>

@@ -1,14 +1,21 @@
 import { useLocation } from '../../lib/context/LocationContext'
 import { useTime } from '../../lib/context/TimeContext'
 import { useTemperature } from '../../lib/hooks/useWeatherData'
+import { useWeather } from '../../lib/context/WeatherContext'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { TimeSelector } from '../TimeSelector'
 import { ThermometerIcon, Loader2Icon } from 'lucide-react'
+import { useEffect } from 'react'
 
 function TemperatureTab() {
   const { selectedLocation } = useLocation()
   const { selectedTimeIndex } = useTime()
+  const { setTemperature } = useWeather()
   const { data: temperature, isLoading, error } = useTemperature(selectedLocation)
+
+  useEffect(() => {
+    if (temperature) setTemperature(temperature)
+  }, [temperature, setTemperature])
 
   if (!selectedLocation) {
     return (

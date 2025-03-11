@@ -1,14 +1,21 @@
 import { useLocation } from '../../lib/context/LocationContext'
 import { useTime } from '../../lib/context/TimeContext'
 import { useHumidity } from '../../lib/hooks/useWeatherData'
+import { useWeather } from '../../lib/context/WeatherContext'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { TimeSelector } from '../TimeSelector'
 import { DropletIcon, CloudRainIcon, Loader2Icon } from 'lucide-react'
+import { useEffect } from 'react'
 
 function HumidityTab() {
   const { selectedLocation } = useLocation()
   const { selectedTimeIndex } = useTime()
+  const { setHumidity } = useWeather()
   const { data: humidity, isLoading, error } = useHumidity(selectedLocation)
+
+  useEffect(() => {
+    if (humidity) setHumidity(humidity)
+  }, [humidity, setHumidity])
 
   if (!selectedLocation) {
     return (

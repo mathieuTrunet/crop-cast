@@ -1,8 +1,10 @@
 import { useLocation } from '../../lib/context/LocationContext'
 import { useTime } from '../../lib/context/TimeContext'
 import { useWeatherGeneral, weatherCodeMap } from '../../lib/hooks/useWeatherData'
+import { useWeather } from '../../lib/context/WeatherContext'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { TimeSelector } from '../TimeSelector'
+import { useEffect } from 'react'
 import {
   SunIcon,
   CloudIcon,
@@ -17,7 +19,12 @@ import {
 function WeatherDataTab() {
   const { selectedLocation } = useLocation()
   const { selectedTimeIndex } = useTime()
+  const { setWeatherGeneral } = useWeather()
   const { data: weatherGeneral, isLoading, error } = useWeatherGeneral(selectedLocation)
+
+  useEffect(() => {
+    if (weatherGeneral) setWeatherGeneral(weatherGeneral)
+  }, [weatherGeneral, setWeatherGeneral])
 
   const getWeatherIcon = (code: number | null) => {
     if (code === null) return <CloudIcon className='h-10 w-10' />

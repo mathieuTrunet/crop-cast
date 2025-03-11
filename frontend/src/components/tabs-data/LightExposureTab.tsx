@@ -1,14 +1,21 @@
 import { useLocation } from '../../lib/context/LocationContext'
 import { useTime } from '../../lib/context/TimeContext'
 import { useLightExposure } from '../../lib/hooks/useWeatherData'
+import { useWeather } from '../../lib/context/WeatherContext'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { TimeSelector } from '../TimeSelector'
 import { SunIcon, MoonIcon, Loader2Icon } from 'lucide-react'
+import { useEffect } from 'react'
 
 function LightExposureTab() {
   const { selectedLocation } = useLocation()
   const { selectedTimeIndex } = useTime()
+  const { setLightExposure } = useWeather()
   const { data: lightExposure, isLoading, error } = useLightExposure(selectedLocation)
+
+  useEffect(() => {
+    if (lightExposure) setLightExposure(lightExposure)
+  }, [lightExposure, setLightExposure])
 
   if (!selectedLocation) {
     return (
