@@ -18,7 +18,6 @@ function LocationMarker() {
   const { weatherGeneral, temperature, humidity, lightExposure } = useWeather()
   const { selectedTimeIndex } = useTime()
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const map = useMapEvents({
     click(e) {
       const { lat, lng } = e.latlng
@@ -27,6 +26,7 @@ function LocationMarker() {
         longitude: lng,
         name: `Location (${lat.toFixed(4)}, ${lng.toFixed(4)})`,
       })
+      map.flyTo([lat, lng], 13)
     },
   })
 
@@ -205,6 +205,7 @@ function LocationMarker() {
     }
 
     return defaultStyle
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTab, weatherGeneral, temperature, humidity, lightExposure, selectedTimeIndex])
 
   return selectedLocation ? (
